@@ -26,8 +26,10 @@ response = requests.get(url)
 
 # Process the resonse in JSON format and print 
 review = response.json()
-# processed_review = 
 print(review)
 
 with open(review_store, 'w') as f:
-    json.dump(review, f)
+    json.dump(review, f, indent=4)
+
+   # processed_review = json.loads(review())
+
