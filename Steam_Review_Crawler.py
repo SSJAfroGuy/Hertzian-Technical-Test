@@ -1,9 +1,13 @@
 import requests
 import json
+import uuid
+import random
 
 # Ask user to input the ID of their game - P5S:1382330
 # appid = input("Please enter the steam ID: ")
 appid = 1382330
+rnduuid=random.Random()
+rndid=random.Random()
 review_num = 0
 review_store = "Processed_Reviews.txt"
 open(review_store, 'w').close()
@@ -18,6 +22,12 @@ open(review_store, 'w').close()
 #     "purchase_type": "all",  # e.g. steam or non_steam_purchase
 #     "num_per_page": "100",  # default is 20, maximum is 100
 # }
+
+
+def __Randomise__(id):
+    rndid.seed(int(id))
+    rnd = uuid.UUID(int=rndid.getrandbits(128), version=4)
+    return rnd
 
 
 # Take the input id and append it to the steam review API
@@ -73,11 +83,15 @@ for review in data:
     helpful     = data['reviews'][review_num]['votes_up']
     funny       = data['reviews'][review_num]['votes_funny']
     recommended = data['reviews'][review_num]['voted_up']
+    # rnduuid.seed(int(author))
+    # random_uuid = uuid.UUID(int=rnduuid.getrandbits(128), version=4)
+    uuid_str = str((__Randomise__(author)))
+    id_str   = str((__Randomise__(id)))
     review_num += 1
 
     review_item = {
-        'id': id,
-        'author': author,
+        'id': id_str,
+        'author-UUID': uuid_str,
         'date': date,
         'hours': hours,
         'content': content,
@@ -92,9 +106,7 @@ for review in data:
 print(review_list)
 
 with open(review_store, 'w') as f:
-    json.dump(review_list, f, ensure_ascii=False, indent=2)
-    
-
+    json.dump(review_list, f, ensure_ascii=True, indent=2)
 
 # {
 # "id": “your generated id”
@@ -103,10 +115,10 @@ with open(review_store, 'w') as f:
 # "hours":100,
 # "content":”Lorem ipsum dolor sit amet”,
 # "comments":4,
-# "source":”steam”,
+# "source":”steam”, INPUT
 # "helpful":6,
 # "funny":3,
 # "recommended": True,
-# "franchise":”A franchise name”,
-# "gameName":”A game Name”
+# "franchise":”A franchise name”, INPUT
+# "gameName":”A game Name” INPUT 
 # }
