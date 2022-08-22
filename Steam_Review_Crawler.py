@@ -4,6 +4,7 @@ import json
 # Ask user to input the ID of their game - P5S:1382330
 # appid = input("Please enter the steam ID: ")
 appid = 1382330
+review_num = 0
 review_store = "Processed_Reviews.txt"
 open(review_store, 'w').close()
 # review_type = input("Would you like your results sorted by date? (Y/N)")
@@ -40,13 +41,13 @@ response = requests.get(url)
 data = json.loads(response.text)
 
 #placeholder id generation
-id = str(data['reviews'][0]['author']['steamid']) + str(appid)
+review_id = str(data['reviews'][0]['author']['steamid']) + str(appid)
 if (data['reviews'][0]['steam_purchase']) == True:
     review_source = "steam"
 else:
     review_source = "other"
 
-print(id)
+print(review_id)
 print(data['reviews'][0]['author']['steamid'])
 print(data['reviews'][0]['timestamp_created'])
 print(data['reviews'][0]['author']['playtime_forever'])
@@ -56,10 +57,42 @@ print(review_source)
 print(data['reviews'][0]['votes_up'])
 print(data['reviews'][0]['votes_funny'])
 print(data['reviews'][0]['voted_up'])
+print("franchise")
+print("gameName")
 
+review_list = []
 
+for review in data:
+    id          = review_id
+    author      = data['reviews'][review_num]['author']['steamid']
+    date        = data['reviews'][review_num]['timestamp_created']
+    hours       = data['reviews'][review_num]['author']['playtime_forever']
+    content     = data['reviews'][review_num]['review']
+    comments    = data['reviews'][review_num]['comment_count']
+    source      = review_source
+    helpful     = data['reviews'][review_num]['votes_up']
+    funny       = data['reviews'][review_num]['votes_funny']
+    recommended = data['reviews'][review_num]['voted_up']
+    review_num += 1
 
+    review_item = {
+        'id': id,
+        'author': author,
+        'date': date,
+        'hours': hours,
+        'content': content,
+        'comments': comments,
+        'source': source,
+        'helpful': helpful,
+        'funny': funny,
+        'recommended': recommended
+        }
+    review_list.append(review_item)
 
+print(review_list)
+
+with open(review_store, 'w') as f:
+    json.dump(review_list, f, ensure_ascii=False, indent=2)
     
 
 
